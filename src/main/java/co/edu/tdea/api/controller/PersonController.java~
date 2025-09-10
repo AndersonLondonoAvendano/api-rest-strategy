@@ -1,0 +1,53 @@
+package co.edu.tdea.api.controller;
+
+import co.edu.tdea.api.model.Person;
+import co.edu.tdea.api.service.PersonaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import co.edu.tdea.api.repository.PersonRepository;
+import java.util.List;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1")
+public class PersonController {
+
+    private final PersonaService personaService;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @GetMapping("/people")
+    public List<Person> allPersons(){
+        return personRepository.findAll();
+    }
+
+    @GetMapping("/person/{name}")
+    public List<Person> findByName(String name){
+        return personRepository.findByName(name);
+    }
+
+    @PostMapping("/person")
+    public Person createPerson(@RequestBody Person person){
+        return personRepository.save(person);
+    }
+
+    @PutMapping("/person")
+    public Person updatePerson(@PathVariable Long id,  @RequestBody Person person){
+        return personRepository.save(person);
+    }
+
+    @DeleteMapping("/person/{id}")
+    public void deletePerson(@PathVariable("id") Long id){
+        personRepository.deleteById(id);
+    }
+
+
+    // Strategies endoints
+    @GetMapping("/sorting")
+    public ResponseEntity<List<Person>> sortByName(@RequestParam(defaultValue="byNameAsc") String sort){
+        return ResponseEntity.ok(personaService.listByNameAsc(sort));
+    }
+}
